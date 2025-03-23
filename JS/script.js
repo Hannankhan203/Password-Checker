@@ -1,54 +1,96 @@
-var img = document.getElementById("img");
-var passinp = document.getElementById("password");
-var strength = document.getElementById("strength");
-var eye = document.getElementById("eye");
+const img = document.querySelector("#img");
+const passInp = document.querySelector("#password");
+const strength = document.querySelector("#strength");
+const eye = document.querySelector("#eye");
 
 function checkStrength() {
-  let length = passinp.value.length;
+  let password = passInp.value;
+  let length = password.length;
+
+  let hasUppercase = /[A-Z]/.test(password);
+  let hasLowercase = /[a-z]/.test(password);
+  let hasNumber = /[0-9]/.test(password);
+  let hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  let isRepetitive = /(.)\1{2,}/.test(password);
+
+  let strengthLevel = 0;
 
   if (length === 0) {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/6/60/Ezgif-frame-001.png";
-
-    strength.innerHTML = "Strength:";
+    strengthLevel = 0;
   } else if (length <= 2) {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/6/60/Ezgif-frame-001.png";
-    strength.innerHTML = 'Strength: <span style="color:red">Weakest</span>';
+    strengthLevel = 1;
   } else if (length <= 4) {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/1/19/Ezgif-frame-001_1.png";
-    strength.innerHTML =
-      'Strength: <span style="color:rgb(247, 56, 56);">Weak</span>';
+    strengthLevel = 2;
   } else if (length <= 6) {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/a/ad/7hd.png";
-    strength.innerHTML = 'Strength: <span style="color:yellow">Average</span>';
+    strengthLevel = 3;
   } else if (length <= 8) {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/2/26/Phase_2.jpg";
-    strength.innerHTML =
-      'Strength: <span style="color:lightgreen">Strong</span>';
+    strengthLevel = 4;
   } else {
-    img.src =
-      "https://static.wikia.nocookie.net/the-uncanny-incredible/images/e/ee/Phase_1.jpg";
-    strength.innerHTML = 'Strength: <span style="color:green;">Perfect </span>';
+    strengthLevel = 5;
+  }
+
+  let varietyScore = 0;
+  if (hasUppercase) varietyScore++;
+  if (hasLowercase) varietyScore++;
+  if (hasNumber) varietyScore++;
+  if (hasSpecialChar) varietyScore++;
+
+  if (isRepetitive) {
+    strengthLevel = Math.max(strengthLevel - 2, 1);
+  }
+
+  if (varietyScore >= 3) {
+    strengthLevel = Math.min(strengthLevel + 1, 5);
+  }
+
+  switch (strengthLevel) {
+    case 0:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/6/60/Ezgif-frame-001.png";
+      strength.innerHTML = "Strength:";
+      break;
+    case 1:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/6/60/Ezgif-frame-001.png";
+      strength.innerHTML = 'Strength: <span style="color:red">Weakest</span>';
+      break;
+    case 2:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/1/19/Ezgif-frame-001_1.png";
+      strength.innerHTML =
+        'Strength: <span style="color:rgb(247, 56, 56);">Weak</span>';
+      break;
+    case 3:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/a/ad/7hd.png";
+      strength.innerHTML =
+        'Strength: <span style="color:yellow">Average</span>';
+      break;
+    case 4:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/2/26/Phase_2.jpg";
+      strength.innerHTML =
+        'Strength: <span style="color:lightgreen">Strong</span>';
+      break;
+    case 5:
+      img.src =
+        "https://static.wikia.nocookie.net/the-uncanny-incredible/images/e/ee/Phase_1.jpg";
+      strength.innerHTML =
+        'Strength: <span style="color:green;">Perfect </span>';
+      break;
   }
 }
 
 function showPass() {
-  var isShow = false;
-  if (passinp.type === "password") {
-    passinp.type = "text";
-    isShow = true;
+  if (passInp.type === "password") {
+    passInp.type = "text";
     eye.style.color = "orange";
-  }
-  if (!isShow) {
-    passinp.type = "password";
+  } else {
+    passInp.type = "password";
     eye.style.color = "black";
   }
-  isShow = !isShow;
 }
 
-passinp.addEventListener("input", checkStrength);
+passInp.addEventListener("input", checkStrength);
 eye.addEventListener("click", showPass);
